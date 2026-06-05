@@ -27,6 +27,7 @@
 - [Features 💪](#features-)
 - [Local development (monorepo)](#local-development-monorepo)
 - [Environment variables](#environment-variables)
+- [Troubleshooting](#troubleshooting)
 - [Contributing 👨‍💻](#contributing-)
 - [Contributors 🤝](#contributors-)
 - [Maintainers](#maintainers)
@@ -165,6 +166,44 @@ cp frontend/.env.example frontend/.env
 | `VITE_BASE_URL` | Yes | API base URL, e.g. `http://localhost:5000/api/v1` |
 | `VITE_SOCKET_URL` | No | Socket.IO URL for real-time notifications (optional) |
 | `VITE_GOOGLE_CLIENT_ID` | Yes | https://console.cloud.google.com |
+
+### Troubleshooting
+
+#### MongoDB connection errors
+
+- **Problem:** The backend starts with database connection errors or cannot load API data.
+- **Possible cause:** `DATABASE_URL` is missing, incorrect, points to the wrong database, or MongoDB is not running.
+- **Suggested solution:** Check `backend/.env` and verify `DATABASE_URL` matches your local MongoDB or Atlas URI. If you use local MongoDB, make sure the MongoDB service is running before starting the backend.
+
+#### Missing environment variables
+
+- **Problem:** The backend or frontend fails to start, or features break during development.
+- **Possible cause:** Required values are missing from `backend/.env` or `frontend/.env`.
+- **Suggested solution:** Compare your local `.env` files with `backend/.env.example` and `frontend/.env.example`, then add any missing variables.
+
+#### Port conflicts
+
+- **Problem:** The frontend or backend cannot start because a port is already in use.
+- **Possible cause:** Another process is already using port **4001** for the frontend or **5000** for the backend.
+- **Suggested solution:** Find and stop the conflicting process, then restart the app. On Windows, run `netstat -ano | findstr :5000` or `netstat -ano | findstr :4001`, then stop the process with `taskkill /PID <PID> /F`. If needed, change the backend `PORT` in `backend/.env` or update the frontend dev server port in the frontend configuration.
+
+#### Dependency installation issues
+
+- **Problem:** `npm install` fails or installed packages behave unexpectedly.
+- **Possible cause:** Cached dependencies, a stale lock file, or an incomplete install.
+- **Suggested solution:** Delete `node_modules` and the lock file, then reinstall dependencies from the repository root with `npm install`.
+
+#### Admin seeding issues
+
+- **Problem:** Admin user creation fails when running `npx ts-node scripts/seed-admin.ts`.
+- **Possible cause:** Admin credentials are missing or the backend cannot connect to MongoDB.
+- **Suggested solution:** Verify `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set in `backend/.env`, then confirm `DATABASE_URL` is valid and MongoDB is running.
+
+#### Socket connection issues
+
+- **Problem:** Real-time notifications do not connect or the browser shows Socket.IO errors.
+- **Possible cause:** `VITE_SOCKET_URL` is incorrect, missing, or the backend/socket service is not running.
+- **Suggested solution:** Check `frontend/.env` and verify `VITE_SOCKET_URL` points to the active socket service. Make sure the backend/socket service is running, then check the browser console for connection errors.
 
 ### Contributing workflow
 
