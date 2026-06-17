@@ -22,8 +22,6 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 from tensorflow.keras.models import load_model
 from model import SEQ_LEN, N_FEATURES
-
-from pathlib import Path
 ML_DIR = Path(__file__).resolve().parent
 MODEL_PATH = ML_DIR / "saved" / "model.keras"
 SCALER_PATH = ML_DIR / "saved" / "scaler.pkl"
@@ -214,23 +212,26 @@ def _dominant_feature(seq_scaled: np.ndarray, reconstructed: np.ndarray) -> str:
 
 # ── Suggestion history — avoid repeating the same tip ────────────────────────
 
-_suggestion_history: list[str] = []
 MAX_HISTORY = 6
 
 
-def _get_unique_suggestion(feature: str) -> str:
-    """
-    Pick a suggestion for the given feature that hasn't been shown recently.
-    Falls back to any suggestion if all have been shown.
-    """
+def _get_unique_suggestion(
+    feature: str,
+    history: list[str] | None = None,
+) -> str:
+
+    history = history or []
+
     pool = SUGGESTIONS.get(feature, SUGGESTIONS["general"])
-    unseen = [s for s in pool if s not in _suggestion_history]
+
+    unseen = [s for s in pool if s not in history]
 
     chosen = random.choice(unseen) if unseen else random.choice(pool)
 
-    _suggestion_history.append(chosen)
-    if len(_suggestion_history) > MAX_HISTORY:
-        _suggestion_history.pop(0)
+    history.append(chosen)
+
+    if len(history) > MAX_HISTORY:
+        history.pop(0)
 
     return chosen
 
