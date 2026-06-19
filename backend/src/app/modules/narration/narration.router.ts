@@ -16,6 +16,15 @@ router.post(
   ),
   NarrationController.synthesize
 );
-router.get("/audio/:filename", NarrationController.getAudioFile);
+// Apply rate limiting to protect against abuse
+import rateLimit from 'express-rate-limit';
+
+const narrationRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // limit each IP to 30 requests per windowMs
+  message: 'Too many requests, please try again later.',
+});
+
+router.get("/audio/:filename", narrationRateLimiter, NarrationController.getAudioFile);
 
 export const NarrationRouter = router;
