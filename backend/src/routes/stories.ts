@@ -27,6 +27,7 @@ const branchingStorySchema = z.object({
 
 router.post(
   "/branching",
+  storyGenerationRateLimiter,
   auth(
     ENUM_USER_ROLE.USER,
     ENUM_USER_ROLE.WRITER,
@@ -34,21 +35,18 @@ router.post(
     ENUM_USER_ROLE.SUPER_ADMIN
   ),
   validateRequest(branchingStorySchema),
-  storyGenerationRateLimiter,
   StoryBranchingController.createBranchingStory
 );
 
 router.post(
   "/:id/fork",
+  storyGenerationRateLimiter,
   auth(
     ENUM_USER_ROLE.USER,
     ENUM_USER_ROLE.WRITER,
     ENUM_USER_ROLE.ADMIN,
     ENUM_USER_ROLE.SUPER_ADMIN
   ),
-  // CodeQL Fix: The rate limiter middleware is now applied here
-  // to protect the authorization and database access layers.
-  storyGenerationRateLimiter,
   PostController.forkStory
 );
 
