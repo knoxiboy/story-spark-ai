@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   getShortenedText,
@@ -11,7 +10,6 @@ import { calculateReadingTime } from "../../utils/reading-time";
 import { formatReadingStats } from "../../utils/story-utils";
 import CharacterProfileCard from "./CharacterProfileCard";
 import StoryGenreTransformation from "./StoryGenreTransformation";
-import StoryWorldMap from "./StoryWorldMap";
 import StoryMoodDashboard from "./StoryMoodDashboard";
 import StoryTitleSuggestions from "./StoryTitleSuggestions";
 import StoryVersionHistory from "./StoryVersionHistory";
@@ -23,11 +21,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { useCreatePostMutation } from "../../redux/apis/post.api";
 import jsPDF from "jspdf";
 import StoryTranslator from "../translate/StoryTranslator";
-import StoryEndingGenerator from "./StoryEndingGenerator";
-import StoryImprovementSuggestions from "./StoryImprovementSuggestions";
-import StoryRecommendations from "./StoryRecommendations";
-import StoryCollaboration from "./StoryCollaboration";
-import StoryVoiceNarrator from "./StoryVoiceNarrator";
 
 export interface IStories {
   uuid: string;
@@ -64,28 +57,6 @@ const StoriesViewComponent: React.FC<StoriesComponentProps> = ({
   const [showTranslator, setShowTranslator] = useState<boolean>(false);
   const [createPost] = useCreatePostMutation();
   const [showGenreTransformation, setShowGenreTransformation] = useState<boolean>(false);
-  const [showEndingGenerator, setShowEndingGenerator] = useState(false);
-  const [showImprovementPanel, setShowImprovementPanel] = useState(false);
-  const [showRecommendations, setShowRecommendations] = useState(false);
-  const [showCollaboration, setShowCollaboration] = useState(false);
-  const [showNarrator, setShowNarrator] = useState(false);
-
-  const [showWorldMap, setShowWorldMap] = useState<boolean>(false);
-
-const [storyLocations] = useState([
-  {
-    name: "Mystic Forest",
-    description: "A magical forest filled with ancient secrets and creatures.",
-  },
-  {
-    name: "Crystal Kingdom",
-    description: "The kingdom where the main journey begins.",
-  },
-  {
-    name: "Shadow Mountain",
-    description: "A dangerous place holding the final challenge.",
-  },
-]);
 
   useEffect(() => {
     setSelectTopics(topics.filter((topic) => topic.selected));
@@ -365,47 +336,11 @@ if (!stories || stories.length === 0) {
                     </button>
                     <button
                       type="button"
-                      className="rounded-lg px-4 py-2 bg-yellow-600 text-white font-semibold hover:bg-yellow-500 transition-colors"
-                      onClick={() => setShowImprovementPanel(true)}
-                    >
-                      ✨ Improve
-                    </button>
-                    <button
-                      type="button"
                       className="rounded-lg px-4 py-2 bg-emerald-700 text-white font-semibold cursor-pointer hover:bg-emerald-600 transition-colors"
                       onClick={() => setShowTranslator(true)}
                     >
                       🌍 Translate
                     </button>
-                    <button
-
-                      type="button"
-                      className="rounded-lg px-4 py-2 bg-orange-700 text-white font-semibold hover:bg-orange-600 transition-colors"
-                      onClick={() => setShowRecommendations(true)}
-                    >
-                      📚 Recommendations
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded-lg px-4 py-2 bg-cyan-700 text-white font-semibold cursor-pointer hover:bg-cyan-600 transition-colors"
-                      onClick={() => setShowCollaboration(!showCollaboration)}
-                    >
-                      🤝 Collaborate
-                    </button>
-                    <button
-                    type="button"
-                    className="rounded-lg px-4 py-2 bg-orange-700 text-white font-semibold cursor-pointer hover:bg-orange-600 transition-colors"
-                    onClick={() => setShowNarrator(!showNarrator)}
-                  >
-                    🎧 Narrate
-                  </button>
-  type="button"
-  className="rounded-lg px-4 py-2 bg-green-700 text-white font-semibold hover:bg-green-600 transition-colors"
-  onClick={() => setShowWorldMap(true)}
->
-  🗺️ World Map
-</button>
-
                   </>
                 )}
                 <button
@@ -652,23 +587,6 @@ if (!stories || stories.length === 0) {
           onClose={() => setShowGenreTransformation(false)}
         />
       )}
-      {showWorldMap && (
-  <StoryWorldMap
-    locations={storyLocations}
-    onClose={() => setShowWorldMap(false)}
-  />
-)}
-
-{showRecommendations && selectedStory && (
-  <StoryRecommendations
-    story={{
-      title: selectedStory.title,
-      content: selectedStory.content,
-      tag: selectedStory.tag,
-    }}
-    onClose={() => setShowRecommendations(false)}
-  />
-)}
       <Toaster position="top-right" reverseOrder={false} />
 
       {showTranslator && selectedStory && (
